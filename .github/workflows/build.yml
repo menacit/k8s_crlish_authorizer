@@ -1,0 +1,46 @@
+name: "Create and publish container images"
+
+on:
+  push:
+    branches:
+      - "master"
+
+env:
+  REGISTRY: "ghcr.io"
+  NAME: "${{ github.repository }}"
+
+jobs:
+  "build-and-push-image":
+    runs-on: "ubuntu-24.04"
+    permissions:
+      contents: "read"
+      packages: "write"
+
+    steps:
+      - name: "Extract lowercase image name"
+        id: "lowercaser"
+        run: "echo \"name=${NAME}\" | tr '[[:upper:]]' '[[:lower:]]' >> \"${GITHUB_OUTPUT}\""
+      
+      - name: "Checkout repository"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup QEMU for Docker"
+        uses: "docker/setup-qemu-action@f30d974279f970cd3ed4ee3bcf1ff7795e271f00"
+        
+      - name: "Setup Buildx for Docker"
+        uses: "docker/setup-buildx-action@ba31df4664624f17e1b1ef1c9c85ed1ca9463a6d"
+        
+      - name: "Log in to the Container registry"
+        uses: "docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1"
+        with:
+          registry: "${{ env.REGISTRY }}"
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: "Build and push Docker image"
+        uses: "docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4"
+        with:
+          context: "."
+          tags: "${{ env.REGISTRY }}/${{ steps.lowercaser.outputs.name }}:latest"
+          platforms: "linux/amd64,linux/arm64"
+          push: true
