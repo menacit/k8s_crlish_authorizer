@@ -32,6 +32,10 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: crlish-authorizer
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -53,6 +57,7 @@ spec:
                     operator: In
                     values:
                       - crlish-authorizer
+      priorityClassName: system-cluster-critical
       volumes:
         - name: x509
           secret:
@@ -64,30 +69,39 @@ spec:
         - name: server
           image: ghcr.io/menacit/k8s_crlish_authorizer:latest
           ports:
-            - name: crlish-https-api
+            - name: crlish-api
               containerPort: 8443
           volumeMounts:
             - name: x509
               mountPath: /etc/k8s_crlish_authorizer/x509
             - name: conf
               mountPath: /etc/k8s_crlish_authorizer/conf
+          startupProbe:
+            initialDelaySeconds: 3
+            periodSeconds: 2
+            timeoutSeconds: 2
+            failureThreshold: 10
+            httpGet:
+              port: crlish-api
+              scheme: HTTPS
+              path: /healthz
           livenessProbe:
-            initialDelaySeconds: 5
+            initialDelaySeconds: 3
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 5
             httpGet:
-              port: crlish-https-api
-              scheme: https
+              port: crlish-api
+              scheme: HTTPS
               path: /healthz
           readinessProbe:
-            initialDelaySeconds: 5
+            initialDelaySeconds: 3
             periodSeconds: 2
             timeoutSeconds: 2
             failureThreshold: 3
             httpGet:
-              port: crlish-https-api
-              scheme: https
+              port: crlish-api
+              scheme: HTTPS
               path: /healthz
           securityContext:
             allowPrivilegeEscalation: false
@@ -126,7 +140,7 @@ spec:
     app.kubernetes.io/name: crlish-authorizer
   ports:
     - port: 443
-      targetPort: crlish-https-api
+      targetPort: crlish-api
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -143,7 +157,7 @@ spec:
     - Egress
   ingress:
     - ports:
-        - port: crlish-https-api
+        - port: crlish-api
       from:
         - namespaceSelector:
             matchLabels:

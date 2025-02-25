@@ -1,0 +1,25 @@
+---
+apiVersion: apiserver.config.k8s.io/v1
+kind: AuthorizationConfiguration
+authorizers:
+  - type: Webhook
+    name: crlish
+    webhook:
+      authorizedTTL: 90s
+      unauthorizedTTL: 300s
+      timeout: 3s
+      subjectAccessReviewVersion: v1
+      matchConditionSubjectAccessReviewVersion: v1
+      failurePolicy: NoOpinion
+      connectionInfo:
+        type: KubeConfigFile
+        kubeConfigFile: /etc/kubernetes/webhook_crlish-authorizer.yaml
+      matchConditions:
+        - expression: |
+            has(
+              account.extra.authentication__dot__kubernetes__dot__io__slash__credential__dash__id
+            )
+  - type: Node
+    name: node
+  - type: RBAC
+    name: rbac
