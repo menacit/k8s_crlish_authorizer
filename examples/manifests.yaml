@@ -23,19 +23,14 @@ data:
 
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   namespace: crlish-authorizer
   name: crlish-authorizer
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app.kubernetes.io/name: crlish-authorizer
-  strategy:
-    rollingUpdate:
-      maxSurge: 0
-      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -68,6 +63,8 @@ spec:
       containers:
         - name: server
           image: ghcr.io/menacit/k8s_crlish_authorizer:latest
+          args:
+            - -verbose=true
           ports:
             - name: crlish-api
               containerPort: 8443
@@ -115,18 +112,6 @@ spec:
             limits:
               memory: 250Mi
               cpu: 250m
-
----
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  namespace: crlish-authorizer
-  name: crlish-authorizer
-spec:
-  minAvailable: 2
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: crlish-authorizer
 
 ---
 apiVersion: v1

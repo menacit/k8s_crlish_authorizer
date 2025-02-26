@@ -17,7 +17,7 @@ authorizers:
       matchConditions:
         - expression: |
             has(
-              account.extra.authentication__dot__kubernetes__dot__io__slash__credential__dash__id
+              request.extra.authentication__dot__kubernetes__dot__io__slash__credential__dash__id
             )
   - type: Node
     name: node

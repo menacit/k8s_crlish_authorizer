@@ -38,6 +38,7 @@ func init() {
 		"Path to JSON formatted file containing a list of credential IDs which should be denied")
 
 	flag.BoolVar(&verboseLogging, "verbose", false, "Enable verbose debug logging")
+	flag.Parse()
 
 	var logLevel slog.Level
 	if verboseLogging {

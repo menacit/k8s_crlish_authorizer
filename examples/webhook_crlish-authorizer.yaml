@@ -5,7 +5,7 @@ clusters:
   - name: crlish-authorizer
     cluster:
       certificate-authority: /etc/kubernetes/pki/ca.crt
-      server: https://crlish-authorizer.crlish-authorizer
+      server: https://crlish-authorizer.crlish-authorizer.svc.cluster.local/
 contexts:
   - name: crlish-authorizer
     context:
