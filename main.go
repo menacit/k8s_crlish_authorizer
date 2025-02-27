@@ -158,7 +158,10 @@ func authorizationHandler(response http.ResponseWriter, request *http.Request) {
 			if credentialID == deniedCredentialID {
 				logger.Warn(
 					"Subject access review data contains credential ID included in deny list",
-					slog.String("credential-id", credentialID))
+					slog.String("credential-id", credentialID),
+					slog.String("uid", subjectAccessReview.Spec.UID),
+					slog.String("user", subjectAccessReview.Spec.User),
+					slog.Any("groups", subjectAccessReview.Spec.Groups))
 
 				subjectAccessReview.Status.Denied = true
 				subjectAccessReview.Status.Reason = fmt.Sprintf(

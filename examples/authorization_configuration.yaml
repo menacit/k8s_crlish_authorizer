@@ -15,10 +15,7 @@ authorizers:
         type: KubeConfigFile
         kubeConfigFile: /etc/kubernetes/webhook_crlish-authorizer.yaml
       matchConditions:
-        - expression: |
-            has(
-              request.extra.authentication__dot__kubernetes__dot__io__slash__credential__dash__id
-            )
+        - expression: "'authentication.kubernetes.io/credential-id' in request.extra"
   - type: Node
     name: node
   - type: RBAC
