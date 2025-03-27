@@ -31,6 +31,14 @@ Proof of concept - beware of rough edges and limitations. Review the project's
 [open issues](https://github.com/menacit/k8s_crlish_authorizer/issues?q=is%3Aissue%20state%3Aopen).
 
 
+## Acknowledgements
+This tool was created during research for
+[Menacit's Kubernetes Security Course](https://github.com/menacit/kubernetes_security_course).
+Funding for development of the course was provided by _Sweden's National Coordination Centre for
+Research and Innovation in Cybersecurity_, _the Swedish Civil Contingencies Agency_ and
+_the European Union's European Cybersecurity Competence Centre_.  
+
+
 ## Example usage
 Generating a "credential ID" for a certificate file:
 
