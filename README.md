@@ -46,6 +46,12 @@ Generating a "credential ID" for a certificate file:
 $ echo "X509SHA256=$(openssl x509 -in /var/lib/kubelet/pki/kubelet-client-current.pem -outform der | sha256sum | cut -d ' ' -f 1)"
 ```
 
+Generating a "credential ID" for a service account token or other JWT:
+
+```
+$ echo "JTI=$(cat /run/secrets/kubernetes.io/serviceaccount/token | cut -d . -f 2 | base64 -d | jq -r .jti)"
+```
+
 Response from API server when a request is performed using a deny-listed credential ID:
 
 ```json
